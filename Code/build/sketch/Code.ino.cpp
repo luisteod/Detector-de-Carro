@@ -2,38 +2,50 @@
 #include <Arduino.h>
 #include "sensors.h"
 
-
-#define Time_Max (5)         // Tempo máximo de espera do carro na cancela
-#define Inter_Max (360)       // Tempo mínimo entre carros
+#define TIME_MAX 1 // Tempo máximo de espera do carro na cancela
+#define TEMPO_MAX_STATE_C 1
+#define TEMPO_MAX_STATE_V 1
+#define TEMPO_MAX_STATE_J 1
+#define TEMPO_MAX_STATE_W 1
 
 int ledPin = 13; // select the pin for the LED
 
 float dist_t1;
 float dist_t2;
-unsigned long timeStart = 0;
-unsigned long timeInitial = 0;
-unsigned long timePrevious = 0;
-unsigned long timeInterval;
-unsigned long timeTicket;
 bool objectDetected = false;
-bool objectDetectedd = false;
-bool TimeShow = false;
+
+static bool state_c = false;
+static bool state_v = false;
+static bool state_j = false;
+static bool state_w = false;
 
 #line 21 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
 void setup();
 #line 28 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
 void CarStopAlarm();
-#line 57 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
+#line 58 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
 void isProximityState();
-#line 63 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
+#line 112 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
 void loop();
 #line 5 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
-int is_s1_active();
-#line 13 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
-int is_s2_active();
-#line 21 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_s1_active(void);
+#line 10 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_s2_active(void);
+#line 15 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_s1_s2_active(void);
+#line 20 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_state_c(void);
+#line 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_state_v(void);
+#line 29 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_state_j(void);
+#line 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_state_w(void);
+#line 39 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+bool is_idle(void);
+#line 44 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
 float get_dist_s1();
-#line 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
+#line 50 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
 float get_dist_s2();
 #line 21 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
 void setup()
@@ -45,6 +57,7 @@ void setup()
 
 void CarStopAlarm()
 {
+  static unsigned long timeStart;
   static unsigned long timeStop;
 
   if ((is_s1_active()) && (is_s2_active()))
@@ -58,7 +71,7 @@ void CarStopAlarm()
     {
       timeStop = millis() - timeStart;
 
-      if (timeStop >= 1000 * Time_Max) //Car stoped too long verification
+      if (timeStop >= 1000 * TIME_MAX) // Car stoped too long verification
       {
         digitalWrite(ledPin, HIGH);
       }
@@ -66,16 +79,64 @@ void CarStopAlarm()
   }
   else
   {
-     digitalWrite(ledPin, LOW);
-     timeStop = 0;
-     objectDetected = false;
+    digitalWrite(ledPin, LOW);
+    timeStop = 0;
+    objectDetected = false;
   }
 }
 
 void isProximityState()
 {
-  static unsigned long Dtc, Dtv, Dtj;
 
+  static unsigned long start_state_c, start_state_v, start_state_j, start_state_w;
+  volatile unsigned long time_state_c, time_state_v, time_state_j, time_state_w;
+
+
+  if (!state_c && is_state_c())
+  {
+    state_c = true;
+    start_state_c = millis();
+  }
+  else if (!state_v && is_state_v())
+  {
+    state_c = false;
+    time_state_c = start_state_c - millis();
+    if (time_state_c <= TEMPO_MAX_STATE_C * 1000)
+    {
+      state_v = true;
+      start_state_v = millis();
+    }
+  }
+  else if (!state_j && is_state_j())
+  {
+    state_v = false;
+    time_state_v = start_state_v - millis();
+    if (time_state_v <= TEMPO_MAX_STATE_V * 1000)
+    {
+      state_j = true;
+      start_state_j = millis();
+    }
+  }
+  else if (!state_w && is_state_w())
+  {
+    state_j = false;
+    time_state_j = start_state_j - millis();
+    if (time_state_j <= TEMPO_MAX_STATE_J * 1000)
+    {
+      state_w = true;
+      start_state_w = millis();
+    }
+  }
+  else if (is_idle())
+  {
+    time_state_w = start_state_w - millis();
+    if (time_state_w <= TEMPO_MAX_STATE_W * 1000)
+    {
+    }
+  }
+  else
+  {
+  }
 }
 
 void loop()
@@ -84,11 +145,12 @@ void loop()
   dist_t2 = get_dist_s2();
 
   CarStopAlarm();
+  isProximityState();
 
   Serial.print("S1: ");
   Serial.println(dist_t1);
   Serial.print("S2: ");
-  Serial.println(dist_t2);
+  Serial.println(dist_t2); 
 
   delay(500);
 }
@@ -97,20 +159,43 @@ void loop()
 
 extern float dist_t1, dist_t2;
 
-int is_s1_active()
+inline bool is_s1_active(void)
 {
-    if (dist_t1 < Dist_Max)
-        return 1;
-    else
-        return 0;
+    return (dist_t1 < DIST_MAX);
 }
 
-int is_s2_active()
+inline bool is_s2_active(void)
 {
-    if (dist_t1 < Dist_Max)
-        return 1;
-    else
-        return 0;
+    return (dist_t2 < DIST_MAX);
+}
+
+inline bool is_s1_s2_active(void)
+{
+    return (is_s1_active() && is_s2_active());
+}
+
+inline bool is_state_c(void)
+{
+    return (is_s1_active() && !is_s2_active());
+}
+
+inline bool is_state_v(void)
+{
+    return (is_s1_s2_active());
+}
+inline bool is_state_j(void)
+{
+    return (!is_s1_active() && is_s2_active());
+}
+
+inline bool is_state_w(void)
+{
+    return (is_s1_s2_active());
+}
+
+inline bool is_idle(void)
+{
+    return !(is_s1_s2_active());
 }
 
 float get_dist_s1()
@@ -121,6 +206,6 @@ float get_dist_s1()
 
 float get_dist_s2()
 {
-  float sensity_t2 = analogRead(PIN_S2);
-  return sensity_t2 * MAX_RANG / ADC_SOLUTION;
+    float sensity_t2 = analogRead(PIN_S2);
+    return sensity_t2 * MAX_RANG / ADC_SOLUTION;
 }
