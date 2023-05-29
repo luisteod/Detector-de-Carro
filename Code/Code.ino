@@ -1,3 +1,8 @@
+#include <protothreads.h>
+#include <pt-sem.h>
+#include <pt-sleep.h>
+#include <pt.h>
+
 #include <Arduino.h>
 #include "sensors.h"
 
@@ -7,6 +12,7 @@
 #define TEMPO_MAX_STATE_J 1
 #define TEMPO_MAX_STATE_W 1
 
+#define NUM_SAMPLE 30
 int ledPin = 13; // select the pin for the LED
 
 float dist_t1;
@@ -18,11 +24,45 @@ static bool state_v = false;
 static bool state_j = false;
 static bool state_w = false;
 
+static struct pt pt_av;
+static int average_thread_run = 1;
+
 void setup()
 {
   Serial.begin(115200); // Inicializa a comunicação serial com taxa de 9600 bps
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
+  PT_INIT(&pt_av);
+}
+
+static int averageThread(struct pt *pt)
+{
+  PT_BEGIN(pt);
+
+  while(1)
+  {
+    //Waits until some part of program set's threadStop Flag
+    PT_WAIT_UNTIL(pt, average_thread_run != 0);
+
+    Serial.print("average thead perfoming\n");
+
+    float dist_t1_aux = 0;
+    float dist_t2_aux = 0;
+
+    for(int count = 0; count < NUM_SAMPLE ; count++)
+    {
+      dist_t1_aux = dist_t1_aux + get_dist_s1();
+      dist_t2_aux = dist_t2_aux + get_dist_s2();
+      delay(20); //This delay is extreamly necessary for accurate measure
+    }
+
+    dist_t1 = dist_t1_aux/NUM_SAMPLE;
+    dist_t2 = dist_t2_aux/NUM_SAMPLE;
+    
+    //Reset the flag
+    average_thread_run = 0;
+  }
+  PT_END(pt);
 }
 
 void CarStopAlarm()
@@ -111,8 +151,10 @@ void isProximityState()
 
 void loop()
 {
-  dist_t1 = get_dist_s1();
-  dist_t2 = get_dist_s2();
+  averageThread(&pt_av);
+
+  // dist_t1 = get_dist_s1();
+  // dist_t2 = get_dist_s2();  
 
   CarStopAlarm();
   isProximityState();
@@ -122,5 +164,7 @@ void loop()
   Serial.print("S2: ");
   Serial.println(dist_t2); 
 
-  delay(500);
+  //Release thread of average to run
+  average_thread_run = 1;
+
 }

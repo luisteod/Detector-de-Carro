@@ -1,13 +1,12 @@
 # 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
 # 2 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 2
 # 3 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 2
+# 4 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 2
+# 5 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 2
 
-
-
-
-
-
-
+# 7 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 2
+# 8 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 2
+# 16 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
 int ledPin = 13; // select the pin for the LED
 
 float dist_t1;
@@ -19,11 +18,57 @@ static bool state_v = false;
 static bool state_j = false;
 static bool state_w = false;
 
+static struct pt pt_av;
+static int average_thread_run = 1;
+
 void setup()
 {
   Serial.begin(115200); // Inicializa a comunicação serial com taxa de 9600 bps
   pinMode(ledPin, 0x1);
   digitalWrite(ledPin, 0x0);
+  (&pt_av)->lc = 
+# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 3 4
+ __null
+# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
+                ;
+}
+
+static int averageThread(struct pt *pt)
+{
+  { char PT_YIELD_FLAG = 1; do { if((pt)->lc != 
+# 40 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 3 4
+ __null
+# 40 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
+ ) { goto *(pt)->lc; } } while(0);
+
+  while(1)
+  {
+    //Waits until some part of program set's threadStop Flag
+    do { do { LC_LABEL45: ((pt)->lc) = &&LC_LABEL45; } while(0); if(!(average_thread_run != 0)) { return 0; } } while(0);
+
+    Serial.print("average thead perfoming\n");
+
+    float dist_t1_aux = 0;
+    float dist_t2_aux = 0;
+
+    for(int count = 0; count < 30 ; count++)
+    {
+      dist_t1_aux = dist_t1_aux + get_dist_s1();
+      dist_t2_aux = dist_t2_aux + get_dist_s2();
+      delay(20); //This delay is extreamly necessary for accurate measure
+    }
+
+    dist_t1 = dist_t1_aux/30;
+    dist_t2 = dist_t2_aux/30;
+
+    //Reset the flag
+    average_thread_run = 0;
+  }
+  ; PT_YIELD_FLAG = 0; (pt)->lc = 
+# 65 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino" 3 4
+ __null
+# 65 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\Code.ino"
+ ; return 3; };
 }
 
 void CarStopAlarm()
@@ -112,8 +157,11 @@ void isProximityState()
 
 void loop()
 {
-  dist_t1 = get_dist_s1();
-  dist_t2 = get_dist_s2();
+  averageThread(&pt_av);
+
+
+  // dist_t1 = get_dist_s1();
+  // dist_t2 = get_dist_s2();  
 
   CarStopAlarm();
   isProximityState();
@@ -123,7 +171,9 @@ void loop()
   Serial.print("S2: ");
   Serial.println(dist_t2);
 
-  delay(500);
+  //Release thread of average to run
+  average_thread_run = 1;
+
 }
 # 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino"
 # 2 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\sensors.ino" 2

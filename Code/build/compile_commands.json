@@ -23,6 +23,7 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\Hardware 1\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\Hardware 1\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\standard",
+   "-IC:\\Users\\Hardware 1\\Documents\\Arduino\\libraries\\Protothreads\\src",
    "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\build\\sketch\\Code.ino.cpp",
    "-o",
    "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\Code\\build\\sketch\\Code.ino.cpp.o"

@@ -1,5 +1,13 @@
 C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\Code\build\sketch\Code.ino.cpp.o: \
  C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\Code\build\sketch\Code.ino.cpp \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/protothreads.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/lc.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/lc-addrlabels.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt-sleep.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt-sem.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt-sleep.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/binary.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/WCharacter.h \
