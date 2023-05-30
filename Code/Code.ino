@@ -2,9 +2,10 @@
 #include <pt-sem.h>
 #include <pt-sleep.h>
 #include <pt.h>
-
 #include <Arduino.h>
 #include "sensors.h"
+#include "interrupt.h"
+#include "timer.h"
 
 #define TIME_MAX 1 // Tempo máximo de espera do carro na cancela
 #define TEMPO_MAX_STATE_C 1
@@ -14,7 +15,6 @@
 
 #define NUM_SAMPLE 30
 #define STOP_LED 13
-#define WARNING_LED 8
 
 float dist_t1;
 float dist_t2;
@@ -25,10 +25,11 @@ static bool state_v = false;
 static bool state_j = false;
 static bool state_w = false;
 
+bool warning_flag = false;
+
+// Thread Global variables
 static struct pt pt_av;
 static int average_thread_run = 1;
-static struct pt pt_warning;
-static int warning_led_flag = 0;
 
 void setup()
 {
@@ -37,8 +38,12 @@ void setup()
   pinMode(WARNING_LED, OUTPUT);
   digitalWrite(STOP_LED, LOW);
   digitalWrite(WARNING_LED, LOW);
+
+  // Timer initializes
+  timer_initialize();
+
+  // Threads initialize
   PT_INIT(&pt_av);
-  PT_INIT(&pt_warning);
 }
 
 static int averageThread(struct pt *pt)
@@ -101,29 +106,6 @@ void CarStopAlarm()
   }
 }
 
-static int warning_led(struct pt *pt)
-{
-  static int led_count = 0;
-
-  PT_BEGIN(pt);
-  while(1)
-  {
-    PT_WAIT_UNTIL(pt, warning_led_flag != 0);
-    digitalWrite(WARNING_LED, HIGH);
-    led_count++;
-    if(led_count == 10)
-    {
-          digitalWrite(WARNING_LED, HIGH);
-
-    }
-    else if(led_count == 20)
-    {
-
-    }
-  }
-  PT_END(pt);
-}
-
 void state_machine()
 {
 
@@ -139,7 +121,8 @@ void state_machine()
     }
     if (time_state_w <= TEMPO_MAX_STATE_W * 1000)
     {
-      warning_led_flag = 1;
+      //Activates the indicator of invasor
+      warning_flag = true;
     }
     state_c = true;
     start_state_c = millis();
@@ -173,10 +156,6 @@ void state_machine()
       state_w = true;
       start_state_w = millis();
     }
-  }
-  else
-  {
-
   }
 }
 
