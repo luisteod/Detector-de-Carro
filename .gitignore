@@ -1,0 +1,3 @@
+# Specify filepatterns you want git to ignore.
+Code/build
+!Code/build/Code.ino.with_bootloader.hex
