@@ -12,35 +12,39 @@ void timer_initialize(void)
     TCCR1A = 0;
     TCCR1B = 0;
     TCNT1 = 0;
-    OCR1A = 31250;          // compare match register 16MHz/256/2 = 31250
-    TCCR1B = (1 << WGM12);  // CTC mode
-    TCCR1B = (1 << CS12);   // Frequency 16Mhz/ 256 = 62500
+    OCR1A = 31250; // compare match register 16MHz/256/2 = 31250
+    TCCR1B = (1 << WGM12); // CTC mode
+    TCCR1B = TCCR1B | (1 << CS11) | (1 << CS10); // Frequency 16Mhz/64 = 250 kHz
     TIMSK1 = (1 << OCIE1A); // Local interruption OCIE1A
     sei();                  // enable all interrupts
 }
 
 void onTimer(void)
 {
-    warning_flag = true;
+    //warning_flag = true;
     if (warning_flag)
     {
         static boolean state = HIGH;
         elapsedTime = millis() - previousTime;
-        Serial.print(F("Set LED 13 : "));
+        //Serial.print(F("Set LED 13 : "));
         if (state)
         {
-            Serial.print(F("ON"));
+            //Serial.print(F("ON"));
         }
         else
         {
-            Serial.print(F("OFF"));
+            //Serial.print(F("OFF"));
         }
-        Serial.print(F(" - "));
-        Serial.print(elapsedTime);
-        Serial.println(F("ms"));
+        //Serial.print(F(" - "));
+        //Serial.print(elapsedTime);
+        //Serial.println(F("ms"));
         digitalWrite(WARNING_LED, state);
         state = !state;
 
         previousTime = millis();
+    }
+    else
+    {
+        digitalWrite(WARNING_LED, LOW);
     }
 }
