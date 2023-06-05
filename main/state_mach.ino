@@ -17,8 +17,8 @@ void state_machine(void)
 
     volatile unsigned long time_state_c = 0;
     volatile unsigned long time_state_v = 0;
-    volatile unsigned time_state_j = 0;
-    volatile unsigned time_state_w = 0;
+    volatile unsigned long time_state_j = 0;
+    volatile unsigned long time_state_w = 0;
 
     if (!state_c && is_state_c())
     {
@@ -88,5 +88,5 @@ void rst_states(void)
     state_v = false;
     state_j = false;
     state_w = false;
-    Serial.println("RESET");
+    //Serial.println("RESET");
 }

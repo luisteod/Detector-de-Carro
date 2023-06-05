@@ -15,17 +15,17 @@
 
 float dist_t1 = 0;
 float dist_t2 = 0;
+float dist_t1_buff[BUFFER_SIZE] = {0};
+float dist_t2_buff[BUFFER_SIZE] = {0};
+
 bool objectDetected = false;
 
 bool warning_flag = false;
 
-// Thread Global variables
-static struct pt pt_av;
-static int average_thread_run = 1;
-
 void setup()
 {
   Serial.begin(115200); // Inicializa a comunicação serial com taxa de 115200 bps
+  
   pinMode(STOP_LED, OUTPUT);
   pinMode(WARNING_LED, OUTPUT);
   pinMode(FREE_LED, OUTPUT);
@@ -35,39 +35,6 @@ void setup()
 
   // Timer initializes
   timer_initialize();
-
-  // Threads initialize
-  PT_INIT(&pt_av);
-}
-
-static int averageThread(struct pt *pt)
-{
-  PT_BEGIN(pt);
-
-  while (1)
-  {
-    // Waits until some part of program set's threadStop Flag
-    PT_WAIT_UNTIL(pt, average_thread_run != 0);
-
-    // Serial.print("average thead perfoming\n");
-
-    float dist_t1_aux = 0;
-    float dist_t2_aux = 0;
-
-    for (int count = 0; count < NUM_SAMPLE; count++)
-    {
-      dist_t1_aux = dist_t1_aux + get_dist_s1();
-      dist_t2_aux = dist_t2_aux + get_dist_s2();
-      delay(10); // This delay is extreamly necessary for accurate measure
-    }
-
-    dist_t1 = dist_t1_aux / NUM_SAMPLE;
-    dist_t2 = dist_t2_aux / NUM_SAMPLE;
-
-    // Reset the flag
-    average_thread_run = 0;
-  }
-  PT_END(pt);
 }
 
 void CarStopAlarm()
@@ -100,7 +67,7 @@ void CarStopAlarm()
   }
 }
 
-//Verifies if the local for pay is free and do something
+// Verifies if the local for pay is free and do something
 void free_verify(void)
 {
   if (is_idle())
@@ -112,20 +79,22 @@ void free_verify(void)
     digitalWrite(FREE_LED, LOW);
   }
 }
+long print_time = millis();
 
 void loop()
 {
-  averageThread(&pt_av);
+  if (millis() - print_time > 100)
+  {
+    Serial.print("S1: ");
+    Serial.println(dist_t1);
+    Serial.print("S2: ");
+    Serial.println(dist_t2);
 
-  Serial.print("S1: ");
-  Serial.println(dist_t1);
-  Serial.print("S2: ");
-  Serial.println(dist_t2);
+    print_time = millis();
+  }
 
   free_verify();
   CarStopAlarm();
   state_machine();
 
-  //Release thread of average to run
-  average_thread_run = 1;
 }
