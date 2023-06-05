@@ -1,7 +1,7 @@
-#define TEMPO_MAX_STATE_C 10
-#define TEMPO_MAX_STATE_V 10
-#define TEMPO_MAX_STATE_J 10
-#define TEMPO_MAX_STATE_W 5
+#define TEMPO_MAX_car1_exiting 10
+#define TEMPO_MAX_car1_car2_swap 10
+#define TEMPO_MAX_car2_entering 10
+#define TEMPO_MAX_car2_enter 5
 
 #include "sensors.h"
 

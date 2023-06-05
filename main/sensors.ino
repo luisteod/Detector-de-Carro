@@ -17,21 +17,21 @@ inline bool is_s1_s2_active(void)
     return (is_s1_active() && is_s2_active());
 }
 
-inline bool is_state_c(void)
+inline bool is_car1_exiting(void)
 {
     return (!is_s1_active() && is_s2_active());
 }
 
-inline bool is_state_v(void)
+inline bool is_car1_car2_swap(void)
 {
     return (is_s1_s2_active());
 }
-inline bool is_state_j(void)
+inline bool is_car2_entering(void)
 {
     return (is_s1_active() && !is_s2_active());
 }
 
-inline bool is_state_w(void)
+inline bool is_car2_enter(void)
 {
     return (is_s1_s2_active());
 }

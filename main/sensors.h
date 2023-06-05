@@ -17,8 +17,8 @@ inline bool is_s1_active(void);
 inline bool is_s2_active(void);
 inline bool is_s1_s2_active(void);
 
-inline bool is_state_c(void);
-inline bool is_state_v(void);
-inline bool is_state_j(void);
-inline bool is_state_w(void);
+inline bool is_car1_exiting(void);
+inline bool is_car1_car2_swap(void);
+inline bool is_car2_entering(void);
+inline bool is_car2_enter(void);
 inline bool is_idle(void);

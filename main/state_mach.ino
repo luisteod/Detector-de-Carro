@@ -1,34 +1,34 @@
 #include "state_mach.h"
 
-static bool state_c = false;
-static bool state_v = false;
-static bool state_j = false;
-static bool state_w = false;
+static bool car1_exiting = false;
+static bool car1_car2_swap = false;
+static bool car2_entering = false;
+static bool car2_enter = false;
 
 extern bool warning_flag;
 
 void state_machine(void)
 {
 
-    static unsigned long start_state_c = 0;
-    static unsigned long start_state_v = 0;
-    static unsigned long start_state_j = 0;
-    static unsigned long start_state_w = 0;
+    static unsigned long start_car1_exiting = 0;
+    static unsigned long start_car1_car2_swap = 0;
+    static unsigned long start_car2_entering = 0;
+    static unsigned long start_car2_enter = 0;
 
-    volatile unsigned long time_state_c = 0;
-    volatile unsigned long time_state_v = 0;
-    volatile unsigned long time_state_j = 0;
-    volatile unsigned long time_state_w = 0;
+    volatile unsigned long time_car1_exiting = 0;
+    volatile unsigned long time_car1_car2_swap = 0;
+    volatile unsigned long time_car2_entering = 0;
+    volatile unsigned long time_car2_enter = 0;
 
-    if (!state_c && is_state_c())
+    if (!car1_exiting && is_car1_exiting())
     {
         warning_flag = false; // Reset the alarm if new car enter
-        if (state_w)
+        if (car2_enter)
         {
-            state_w = false;
-            time_state_w = millis() - start_state_w;
-            Serial.println("Tempo estado W : " + String((float)time_state_w / 1000, 3) + " seg");
-            if (time_state_w <= TEMPO_MAX_STATE_W * 1000)
+            car2_enter = false;
+            time_car2_enter = millis() - start_car2_enter;
+            Serial.println("Tempo estado W : " + String((float)time_car2_enter / 1000, 3) + " seg");
+            if (time_car2_enter <= TEMPO_MAX_car2_enter * 1000)
             {
                 // Activates the indicator of invasor
                 warning_flag = true;
@@ -36,44 +36,44 @@ void state_machine(void)
             }
         }
         rst_states(); // Reseting all flags
-        state_c = true;
+        car1_exiting = true;
         Serial.print("=====> C ativo <=========\n");
-        start_state_c = millis();
+        start_car1_exiting = millis();
     }
-    else if (!state_v && state_c && is_state_v())
+    else if (!car1_car2_swap && car1_exiting && is_car1_car2_swap())
     {
-        state_c = false;
-        time_state_c = millis() - start_state_c;
-        Serial.println("Tempo estado C : " + String((float)time_state_c / 1000, 3) + " seg");
-        if (time_state_c <= TEMPO_MAX_STATE_C * 1000)
+        car1_exiting = false;
+        time_car1_exiting = millis() - start_car1_exiting;
+        Serial.println("Tempo estado C : " + String((float)time_car1_exiting / 1000, 3) + " seg");
+        if (time_car1_exiting <= TEMPO_MAX_car1_exiting * 1000)
         {
-            state_v = true;
+            car1_car2_swap = true;
             Serial.print("=====> V ativo <========\n");
-            start_state_v = millis();
+            start_car1_car2_swap = millis();
         }
     }
-    else if (!state_j && state_v && is_state_j())
+    else if (!car2_entering && car1_car2_swap && is_car2_entering())
     {
-        state_v = false;
-        time_state_v = millis() - start_state_v;
-        Serial.println("Tempo estado V : " + String((float)time_state_v / 1000, 3) + " seg");
-        if (time_state_v <= TEMPO_MAX_STATE_V * 1000)
+        car1_car2_swap = false;
+        time_car1_car2_swap = millis() - start_car1_car2_swap;
+        Serial.println("Tempo estado V : " + String((float)time_car1_car2_swap / 1000, 3) + " seg");
+        if (time_car1_car2_swap <= TEMPO_MAX_car1_car2_swap * 1000)
         {
-            state_j = true;
+            car2_entering = true;
             Serial.print("=====> J ativo <=========\n");
-            start_state_j = millis();
+            start_car2_entering = millis();
         }
     }
-    else if (!state_w && state_j && is_state_w())
+    else if (!car2_enter && car2_entering && is_car2_enter())
     {
-        state_j = false;
-        time_state_j = millis() - start_state_j;
-        Serial.println("Tempo estado J : " + String((float)time_state_j / 1000, 3) + " seg");
-        if (time_state_j <= TEMPO_MAX_STATE_J * 1000)
+        car2_entering = false;
+        time_car2_entering = millis() - start_car2_entering;
+        Serial.println("Tempo estado J : " + String((float)time_car2_entering / 1000, 3) + " seg");
+        if (time_car2_entering <= TEMPO_MAX_car2_entering * 1000)
         {
-            state_w = true;
+            car2_enter = true;
             Serial.print("=====> W ativo <=========\n");
-            start_state_w = millis();
+            start_car2_enter = millis();
         }
     }
     else if(is_idle())
@@ -84,9 +84,9 @@ void state_machine(void)
 
 void rst_states(void)
 {
-    state_c = false;
-    state_v = false;
-    state_j = false;
-    state_w = false;
+    car1_exiting = false;
+    car1_car2_swap = false;
+    car2_entering = false;
+    car2_enter = false;
     //Serial.println("RESET");
 }
