@@ -28,7 +28,7 @@ void state_machine(void)
             car2_enter = false;
             time_car2_enter = millis() - start_car2_enter;
             Serial.println("Tempo estado W : " + String((float)time_car2_enter / 1000, 3) + " seg");
-            if (time_car2_enter <= TEMPO_MAX_car2_enter * 1000)
+            if (time_car2_enter <= TEMPO_MAX_CAR2_ENTER * 1000)
             {
                 // Activates the indicator of invasor
                 warning_flag = true;
@@ -45,7 +45,7 @@ void state_machine(void)
         car1_exiting = false;
         time_car1_exiting = millis() - start_car1_exiting;
         Serial.println("Tempo estado C : " + String((float)time_car1_exiting / 1000, 3) + " seg");
-        if (time_car1_exiting <= TEMPO_MAX_car1_exiting * 1000)
+        if (time_car1_exiting <= TEMPO_MAX_CAR1_EXITING * 1000)
         {
             car1_car2_swap = true;
             Serial.print("=====> V ativo <========\n");
@@ -57,7 +57,7 @@ void state_machine(void)
         car1_car2_swap = false;
         time_car1_car2_swap = millis() - start_car1_car2_swap;
         Serial.println("Tempo estado V : " + String((float)time_car1_car2_swap / 1000, 3) + " seg");
-        if (time_car1_car2_swap <= TEMPO_MAX_car1_car2_swap * 1000)
+        if (time_car1_car2_swap <= TEMPO_MAX_CAR1_CAR2_SWAP * 1000)
         {
             car2_entering = true;
             Serial.print("=====> J ativo <=========\n");
@@ -69,7 +69,7 @@ void state_machine(void)
         car2_entering = false;
         time_car2_entering = millis() - start_car2_entering;
         Serial.println("Tempo estado J : " + String((float)time_car2_entering / 1000, 3) + " seg");
-        if (time_car2_entering <= TEMPO_MAX_car2_entering * 1000)
+        if (time_car2_entering <= TEMPO_MAX_CAR2_ENTERING * 1000)
         {
             car2_enter = true;
             Serial.print("=====> W ativo <=========\n");

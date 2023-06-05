@@ -8,8 +8,6 @@
 #include "state_mach.h"
 
 #define TIME_MAX 0.01 // Tempo máximo de espera do carro na cancela
-
-#define NUM_SAMPLE 30
 #define STOP_LED 13
 #define FREE_LED 9
 
@@ -25,7 +23,7 @@ bool warning_flag = false;
 void setup()
 {
   Serial.begin(115200); // Inicializa a comunicação serial com taxa de 115200 bps
-  
+
   pinMode(STOP_LED, OUTPUT);
   pinMode(WARNING_LED, OUTPUT);
   pinMode(FREE_LED, OUTPUT);
