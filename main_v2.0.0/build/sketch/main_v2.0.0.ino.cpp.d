@@ -10,4 +10,5 @@ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\main_v2.
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Printable.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/USBAPI.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
- C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\variants\standard/pins_arduino.h
+ C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\variants\standard/pins_arduino.h \
+ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\sensors.h
