@@ -8,13 +8,19 @@ namespace CarDetectorAnalytics
     internal class Program
     {
         static SerialPort serialPort;
-        public Program()
+        string port; 
+        public Program(string[] args)
         {
-            serialPort = new SerialPort("COM4", 115200);
+            serialPort = new SerialPort(args[0], Int32.Parse(args[1]));
         }
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            new Program();
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Program closed, please specify PORT and BAUDRATE of the device");
+                return 0;
+            }
+            new Program(args);
             byte[] Data = new byte[1024];
 
             while (true)
