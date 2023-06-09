@@ -19,7 +19,9 @@ void state_machine(void)
     volatile unsigned long time_car1_car2_swap = 0;
     volatile unsigned long time_car2_entering = 0;
     volatile unsigned long time_car2_enter = 0;
-
+    
+    //Bengin of states chaining
+    
     if (!car1_exiting && is_car1_exiting())
     {
         warning_flag = false; // Reset the alarm if new car enter

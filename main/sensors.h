@@ -2,7 +2,7 @@
 #define sensors.h
 #endif
 
-#define DIST_MAX 100         // Distância levemente abaixo da distância máxima (cm)
+#define DIST_MAX 80         // Distância levemente abaixo da distância máxima (cm)
 #define ERROR_MARGIN 20
 #define MAX_RANG 520        // the max measurement vaule of the module is 520cm(a little bit longer than  effective max range)
 #define ADC_SOLUTION 1023.0  // ADC accuracy of Arduino UNO is 10bit
