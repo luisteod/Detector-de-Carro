@@ -1,5 +1,10 @@
 C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\main_v2.0.0.ino.cpp.o: \
  C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\main_v2.0.0.ino.cpp \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt-sem.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/lc.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/lc-addrlabels.h \
+ C:\Users\Hardware\ 1\Documents\Arduino\libraries\Protothreads\src/pt.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/binary.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/WCharacter.h \
@@ -11,4 +16,7 @@ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\main_v2.
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/USBAPI.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
  C:\Users\Hardware\ 1\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\variants\standard/pins_arduino.h \
- C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\sensors.h
+ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\sensors.h \
+ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\interrupt.h \
+ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\timer.h \
+ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\state_mach.h

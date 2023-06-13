@@ -1,15 +1,13 @@
 #include "sensors.h"
 
-extern float dist_t1, dist_t2;
-
 inline bool is_s1_active(void)
 {
-    return (dist_t1 < (DIST_MAX + ERROR_MARGIN));
+    return 0;
 }
 
 inline bool is_s2_active(void)
 {
-    return (dist_t2 < (DIST_MAX + ERROR_MARGIN));
+    return 0;
 }
 
 inline bool is_s1_s2_active(void)
@@ -41,12 +39,12 @@ inline bool is_idle(void)
     return (!is_s1_active() && !is_s2_active());
 }
 
-float get_dist_s1()
+inline int get_dist_s1(void)
 {
-    dist_t1 = digitalRead(PIN_S1);
+    return digitalRead(PIN_S1);
 }
 
-float get_dist_s2()
+inline int get_dist_s2(void)
 {
-    dist_t2 = digitalRead(PIN_S2);
+    return digitalRead(PIN_S2);
 }

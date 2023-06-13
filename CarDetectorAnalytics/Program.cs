@@ -1,34 +1,36 @@
 ﻿using System;
 using System.IO.Ports;
 using System.IO;
-
+using System.Text;
+using System.Threading;
 
 namespace CarDetectorAnalytics
 {
     internal class Program
     {
+        readonly string port = "COM4";
+        readonly string baud = "115200";
+        
         static SerialPort serialPort;
-        string port; 
-        public Program(string[] args)
+         
+        public Program()
         {
-            serialPort = new SerialPort(args[0], Int32.Parse(args[1]));
+            serialPort = new SerialPort(port, Int32.Parse(baud));
         }
-        static int Main(string[] args)
+        static int Main()
         {
-            if (args.Length == 0)
-            {
-                Console.WriteLine("Program closed, please specify PORT and BAUDRATE of the device");
-                return 0;
-            }
-            new Program(args);
-            byte[] Data = new byte[1024];
+            new Program();
+            csv_handler csv = new csv_handler();
+            string Data;
 
-            while (true)
+            serialPort.Open();
+            while (serialPort.IsOpen)
             {
-
-                serialPort.Open();
-                serialPort.Read(Data, 0, 1024);
+                Data = serialPort.ReadLine();
+                csv.writeline(Data);
+                Console.WriteLine(Data);
             }
+            return 0;
         }
     }
 }

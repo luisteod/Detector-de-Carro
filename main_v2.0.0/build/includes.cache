@@ -11,6 +11,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\build\\sketch\\main_v2.0.0.ino.cpp",
+    "Include": "pt-sem.h",
+    "Includepath": "C:\\Users\\Hardware 1\\Documents\\Arduino\\libraries\\Protothreads\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\build\\sketch\\main_v2.0.0.ino.cpp",
     "Include": "",
     "Includepath": null
   }
