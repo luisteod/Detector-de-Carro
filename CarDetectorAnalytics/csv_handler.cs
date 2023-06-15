@@ -4,37 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 
 namespace CarDetectorAnalytics
 {
-    
+
     internal class csv_handler
     {
-        readonly string path = Directory.GetCurrentDirectory()+"/data.csv";
+        public readonly string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/data.csv";
 
         public csv_handler()
         {
 
         }
-        public bool exists()
+        public string exists()
         {
 
-            if(!File.Exists(path))
+            if (!File.Exists(path))
             {
                 using (File.Create(path)) { }
             }
-            return true;
-        }
-        public bool writeline(string data)
-        {
-            if (this.exists())
-            {
-                using (StreamWriter sw = new StreamWriter(path))
-                {
-                    sw.WriteLine(data);
-                }
-            }
-            return true;
+            return path;
         }
     }
+   
 }

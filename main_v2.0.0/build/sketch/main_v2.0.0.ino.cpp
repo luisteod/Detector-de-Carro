@@ -12,53 +12,52 @@
 #define STOP_LED 13
 #define FREE_LED 9
 
-
 bool objectDetected = false;
 bool warning_flag = false;
 
-#line 18 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
+#line 17 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
 void setup();
-#line 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
+#line 33 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
 void CarStopAlarm();
-#line 65 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
+#line 64 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
 void free_verify(void);
-#line 78 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
+#line 77 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
 void loop();
-#line 3 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+#line 6 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 bool is_s1_active(void);
-#line 8 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+#line 12 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 bool is_s2_active(void);
-#line 13 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+#line 17 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 bool is_s1_s2_active(void);
-#line 18 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+#line 22 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 bool is_car1_exiting(void);
-#line 23 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
-bool is_car1_car2_swap(void);
 #line 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+bool is_car1_car2_swap(void);
+#line 31 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 bool is_car2_entering(void);
-#line 32 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
-bool is_car2_enter(void);
-#line 37 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+#line 36 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+bool is_car2_pay(void);
+#line 41 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 bool is_idle(void);
-#line 42 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+#line 46 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 int get_dist_s1(void);
-#line 47 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
+#line 51 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 int get_dist_s2(void);
 #line 10 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\state_mach.ino"
 void state_machine(void);
-#line 87 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\state_mach.ino"
+#line 93 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\state_mach.ino"
 void rst_states(void);
-#line 14 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+#line 13 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
 void timer_initialize(void);
-#line 41 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+#line 40 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
 void onTimer(void);
-#line 71 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+#line 70 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
 void sampling(void);
-#line 18 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
+#line 17 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\main_v2.0.0.ino"
 void setup()
 {
   Serial.begin(115200); // Inicializa a comunicação serial com taxa de 115200 bps
-  
+
   analogReference(DEFAULT);
   pinMode(STOP_LED, OUTPUT);
   pinMode(WARNING_LED, OUTPUT);
@@ -119,12 +118,12 @@ void loop()
 {
   if (millis() - print_time > 100)
   {
-    /* Serial.print("S1: ");
-    Serial.println(val_s1);
-    Serial.print("S2: ");
-    Serial.println(val_s2); */
+    // Serial.print("S1: ");
+    // Serial.println(val_s1);
+    // Serial.print("S2: ");
+    // Serial.println(val_s2);
 
-    print_time = millis();
+    // print_time = millis();
   }
 
   free_verify();
@@ -147,14 +146,18 @@ ISR(TIMER2_COMPA_vect)
 #line 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
 #include "sensors.h"
 
+extern float val_s1;
+extern float val_s2;
+
 inline bool is_s1_active(void)
 {
-    return 0;
+   // Serial.println(val_s1);
+    return val_s1 > 0.8;
 }
 
 inline bool is_s2_active(void)
 {
-    return 0;
+    return val_s2 > 0.8;
 }
 
 inline bool is_s1_s2_active(void)
@@ -176,7 +179,7 @@ inline bool is_car2_entering(void)
     return (is_s1_active() && !is_s2_active());
 }
 
-inline bool is_car2_enter(void)
+inline bool is_car2_pay(void)
 {
     return (is_s1_s2_active());
 }
@@ -201,7 +204,7 @@ inline int get_dist_s2(void)
 static bool car1_exiting = false;
 static bool car1_car2_swap = false;
 static bool car2_entering = false;
-static bool car2_enter = false;
+static bool car2_pay = false;
 
 extern bool warning_flag;
 
@@ -211,44 +214,46 @@ void state_machine(void)
     static unsigned long start_car1_exiting = 0;
     static unsigned long start_car1_car2_swap = 0;
     static unsigned long start_car2_entering = 0;
-    static unsigned long start_car2_enter = 0;
+    static unsigned long start_car2_pay = 0;
 
     volatile unsigned long time_car1_exiting = 0;
     volatile unsigned long time_car1_car2_swap = 0;
     volatile unsigned long time_car2_entering = 0;
-    volatile unsigned long time_car2_enter = 0;
-    
-    //Bengin of states chaining
-    
+    volatile unsigned long time_car2_pay = 0;
+
+    // Bengin of states chaining
+
     if (!car1_exiting && is_car1_exiting())
     {
         warning_flag = false; // Reset the alarm if new car enter
-        if (car2_enter)
+        if (car2_pay)
         {
-            car2_enter = false;
-            time_car2_enter = millis() - start_car2_enter;
-            Serial.println("Tempo estado W : " + String((float)time_car2_enter / 1000, 3) + " seg");
-            if (time_car2_enter <= TEMPO_MAX_CAR2_ENTER * 1000)
+            car2_pay = false;
+            time_car2_pay = millis() - start_car2_pay;
+            // Time between prev state in seconds
+            Serial.println(String((float)time_car2_pay / 1000, 3));
+            if (time_car2_pay <= TEMPO_MAX_CAR2_PAY * 1000)
             {
                 // Activates the indicator of invasor
                 warning_flag = true;
-                Serial.print("****** INVASOR *********\n");
+                Serial.println("INVASOR");
             }
         }
         rst_states(); // Reseting all flags
         car1_exiting = true;
-        Serial.print("=====> C ativo <=========\n");
+        Serial.print("CAR_1_EXIT ");
         start_car1_exiting = millis();
     }
     else if (!car1_car2_swap && car1_exiting && is_car1_car2_swap())
     {
         car1_exiting = false;
         time_car1_exiting = millis() - start_car1_exiting;
-        Serial.println("Tempo estado C : " + String((float)time_car1_exiting / 1000, 3) + " seg");
+        // Time between prev state in seconds
+        Serial.println(String((float)time_car1_exiting / 1000, 3));
         if (time_car1_exiting <= TEMPO_MAX_CAR1_EXITING * 1000)
         {
             car1_car2_swap = true;
-            Serial.print("=====> V ativo <========\n");
+            Serial.print("SWAP ");
             start_car1_car2_swap = millis();
         }
     }
@@ -256,30 +261,34 @@ void state_machine(void)
     {
         car1_car2_swap = false;
         time_car1_car2_swap = millis() - start_car1_car2_swap;
-        Serial.println("Tempo estado V : " + String((float)time_car1_car2_swap / 1000, 3) + " seg");
+        // Time between prev state in second
+        Serial.println(String((float)time_car1_car2_swap / 1000, 3));
         if (time_car1_car2_swap <= TEMPO_MAX_CAR1_CAR2_SWAP * 1000)
         {
             car2_entering = true;
-            Serial.print("=====> J ativo <=========\n");
+            Serial.print("CAR_2_ENTER ");
             start_car2_entering = millis();
         }
     }
-    else if (!car2_enter && car2_entering && is_car2_enter())
+    else if (!car2_pay && car2_entering && is_car2_pay())
     {
         car2_entering = false;
         time_car2_entering = millis() - start_car2_entering;
-        Serial.println("Tempo estado J : " + String((float)time_car2_entering / 1000, 3) + " seg");
+        // Time between prev state in seconds
+        Serial.println(String((float)time_car2_entering / 1000, 3));
         if (time_car2_entering <= TEMPO_MAX_CAR2_ENTERING * 1000)
         {
-            car2_enter = true;
-            Serial.print("=====> W ativo <=========\n");
-            start_car2_enter = millis();
+            car2_pay = true;
+            Serial.print("CAR_2_PAY ");
+            start_car2_pay = millis();
         }
     }
-    else if(is_idle())
+    else if (is_idle())
     {
-        rst_states();    //Reset states 
+        rst_states(); // Reset states
     }
+    // Catch current state for print
+    // catch_current_state();
 }
 
 void rst_states(void)
@@ -287,9 +296,27 @@ void rst_states(void)
     car1_exiting = false;
     car1_car2_swap = false;
     car2_entering = false;
-    car2_enter = false;
-    //Serial.println("RESET");
+    car2_pay = false;
+    // Serial.println("RESET");
 }
+
+// void catch_current_state(void)
+// {
+
+//     static String current_state;
+//     if(car1_exiting){
+//         current_state = "CAR 1 EXIT";
+//     }
+//     else if (car1_car2_swap){
+//         current_state = "CAR SWAP";
+//     }
+//     else if (car2_entering)
+//         current_state = "CAR 2 ENTER";
+//     else if (car2_pay)
+//         current_state = "CAR 2 PAY";
+
+// }
+
 #line 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
 #include "timer.h"
 #include "sensors.h"
@@ -297,10 +324,9 @@ void rst_states(void)
 unsigned long elapsedTime, previousTime;
 
 extern bool warning_flag;
-extern int val_s1;
-extern int val_s2;
-extern int dist_t1_buff[BUFFER_SIZE];
-extern int dist_t2_buff[BUFFER_SIZE];
+float val_s1 = 0;
+float val_s2 = 0;
+
 
 /*Initializes the timer1 with a prescaler
  resulting an interruption each 1 second*/
@@ -364,23 +390,21 @@ void onTimer(void)
 void sampling(void)
 {
     static int counter = 0;
-    static float val_s1 = 0;
-    static float val_s2 = 0;
     static float dist_t1_buff[BUFFER_SIZE] = {0};
     static float dist_t2_buff[BUFFER_SIZE] = {0};
     float sample = 0;
 
     sample = (float)get_dist_s1() / BUFFER_SIZE;
-    Serial.println(sample);
-    delay(500);
     val_s1 = val_s1 + sample - dist_t1_buff[counter];
+    // Serial.print(String(val_s1));
+    // Serial.print(" ");
     dist_t1_buff[counter] = sample;
-    Serial.println(val_s1);
-
-    delay(500);
 
     sample = (float)get_dist_s2() / BUFFER_SIZE;
     val_s2 = val_s2 + sample - dist_t2_buff[counter];
+    // Serial.print(String(val_s2));
+    // Serial.print("\n");
+
     dist_t2_buff[counter] = sample;
     counter++;
     if (counter == BUFFER_SIZE)

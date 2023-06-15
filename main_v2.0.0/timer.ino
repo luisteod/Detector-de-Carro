@@ -4,10 +4,9 @@
 unsigned long elapsedTime, previousTime;
 
 extern bool warning_flag;
-extern int val_s1;
-extern int val_s2;
-extern int dist_t1_buff[BUFFER_SIZE];
-extern int dist_t2_buff[BUFFER_SIZE];
+float val_s1 = 0;
+float val_s2 = 0;
+
 
 /*Initializes the timer1 with a prescaler
  resulting an interruption each 1 second*/
@@ -71,18 +70,21 @@ void onTimer(void)
 void sampling(void)
 {
     static int counter = 0;
-    static float val_s1 = 0;
-    static float val_s2 = 0;
     static float dist_t1_buff[BUFFER_SIZE] = {0};
     static float dist_t2_buff[BUFFER_SIZE] = {0};
     float sample = 0;
 
     sample = (float)get_dist_s1() / BUFFER_SIZE;
     val_s1 = val_s1 + sample - dist_t1_buff[counter];
+    // Serial.print(String(val_s1));
+    // Serial.print(" ");
     dist_t1_buff[counter] = sample;
 
     sample = (float)get_dist_s2() / BUFFER_SIZE;
     val_s2 = val_s2 + sample - dist_t2_buff[counter];
+    // Serial.print(String(val_s2));
+    // Serial.print("\n");
+
     dist_t2_buff[counter] = sample;
     counter++;
     if (counter == BUFFER_SIZE)

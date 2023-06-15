@@ -11,14 +11,13 @@
 #define STOP_LED 13
 #define FREE_LED 9
 
-
 bool objectDetected = false;
 bool warning_flag = false;
 
 void setup()
 {
   Serial.begin(115200); // Inicializa a comunicação serial com taxa de 115200 bps
-  
+
   analogReference(DEFAULT);
   pinMode(STOP_LED, OUTPUT);
   pinMode(WARNING_LED, OUTPUT);
@@ -79,12 +78,12 @@ void loop()
 {
   if (millis() - print_time > 100)
   {
-    /* Serial.print("S1: ");
-    Serial.println(val_s1);
-    Serial.print("S2: ");
-    Serial.println(val_s2); */
+    // Serial.print("S1: ");
+    // Serial.println(val_s1);
+    // Serial.print("S2: ");
+    // Serial.println(val_s2);
 
-    print_time = millis();
+    // print_time = millis();
   }
 
   free_verify();

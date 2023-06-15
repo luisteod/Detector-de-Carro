@@ -1,13 +1,17 @@
 #include "sensors.h"
 
+extern float val_s1;
+extern float val_s2;
+
 inline bool is_s1_active(void)
 {
-    return 0;
+   // Serial.println(val_s1);
+    return val_s1 > 0.8;
 }
 
 inline bool is_s2_active(void)
 {
-    return 0;
+    return val_s2 > 0.8;
 }
 
 inline bool is_s1_s2_active(void)
@@ -29,7 +33,7 @@ inline bool is_car2_entering(void)
     return (is_s1_active() && !is_s2_active());
 }
 
-inline bool is_car2_enter(void)
+inline bool is_car2_pay(void)
 {
     return (is_s1_s2_active());
 }

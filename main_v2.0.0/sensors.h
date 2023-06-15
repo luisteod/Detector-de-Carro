@@ -20,5 +20,5 @@ inline bool is_s1_s2_active(void);
 inline bool is_car1_exiting(void);
 inline bool is_car1_car2_swap(void);
 inline bool is_car2_entering(void);
-inline bool is_car2_enter(void);
+inline bool is_car2_pay(void);
 inline bool is_idle(void);
