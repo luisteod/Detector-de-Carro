@@ -12,7 +12,6 @@ namespace CarDetectorAnalytics
         readonly string port = "COM4";
         readonly string baud = "115200";
 
-
         static SerialPort serialPort;
         private csv_handler csv;
         public Program()
@@ -29,8 +28,10 @@ namespace CarDetectorAnalytics
             serialPort.Open();
             using (StreamWriter sw = new StreamWriter(p.csv.path))
             {
-                for (int i = 0; i < 1000; i++)
+                DateTime var = DateTime.Now;
+                while (var.AddSeconds(100) > DateTime.Now)
                 {
+
                     Data = serialPort.ReadLine();
                     if (Data != null)
                     {
@@ -46,6 +47,7 @@ namespace CarDetectorAnalytics
                     }
 
                 }
+
             }
             return 0;
         }
