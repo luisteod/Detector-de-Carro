@@ -1,8 +1,0 @@
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\bin\Debug\CarDetectorAnalytics.exe.config
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\bin\Debug\CarDetectorAnalytics.exe
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\bin\Debug\CarDetectorAnalytics.pdb
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\obj\Debug\CarDetectorAnalytics.csproj.AssemblyReference.cache
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\obj\Debug\CarDetectorAnalytics.csproj.SuggestedBindingRedirects.cache
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\obj\Debug\CarDetectorAnalytics.csproj.CoreCompileInputs.cache
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\obj\Debug\CarDetectorAnalytics.exe
-C:\Users\Hardware 1\Desktop\Detector-de-Carro\CarDetectorAnalytics\obj\Debug\CarDetectorAnalytics.pdb

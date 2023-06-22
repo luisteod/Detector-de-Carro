@@ -99,7 +99,6 @@ void state_machineine(void)
     }
     else if (!idle && is_idle())
     {
-        rst_states();
         idle = true;
         // Restarta a contagem com o tempo de início relativo
         // a última ativação do estado car1_entering.
@@ -108,6 +107,8 @@ void state_machineine(void)
             csv_print(String("IDLE "));
             start_idle = millis();
         }
+        
+        rst_states();
     }
     // Bengin of states chaining
     // Caso esteja vindo de idle, será feita a verificacao do
@@ -138,7 +139,7 @@ void rst_states(void)
     car1_car2_swap = false;
     car2_enter = false;
     car2_pay = false;
-    idle = false;
+    //idle = false;
 }
 
 inline bool is_car1_exit(void)

@@ -1,5 +1,5 @@
 #For car firmware
-main_v2.0.0/build
+main_v2.0.0/build/*
 !main_v2.0.0/build/main_v2.0.0.ino.with_bootloader.hex
 main_v2.0.0/.vscode
 
@@ -9,3 +9,5 @@ main/build/*
 
 #For car analytics
 CarDetectorAnalytics/.vs
+CarDetectorAnalytics/obj/Debug/*
+!CarDetectorAnalytics/obj/Debug/CarDetectorAnalytics.exe

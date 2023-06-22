@@ -26,13 +26,21 @@ namespace CarDetectorAnalytics
             string Data = null;
 
             serialPort.Open();
+            serialPort.DiscardOutBuffer();
+            serialPort.ReadTimeout = 50000;
             using (StreamWriter sw = new StreamWriter(p.csv.path))
             {
-                DateTime var = DateTime.Now;
-                while (var.AddSeconds(100) > DateTime.Now)
+                while (true)
                 {
-
-                    Data = serialPort.ReadLine();
+                    try
+                    {
+                        Data = serialPort.ReadLine();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        return 0;
+                    }
                     if (Data != null)
                     {
                         Data = Data.TrimEnd();
