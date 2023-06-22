@@ -1,4 +1,4 @@
 #include "sensors.h"
 
-void state_machine(void);
+void state_machineine(void);
 void rst_states(void);

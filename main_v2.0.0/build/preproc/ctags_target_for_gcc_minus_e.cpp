@@ -89,7 +89,7 @@ void loop()
 
   free_verify();
   CarStopAlarm();
-  state_machine();
+  state_machineine();
 
 }
 # 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\interrupt.ino"
@@ -113,7 +113,8 @@ extern "C" void __vector_7 /* Timer/Counter2 Compare Match A */ (void) __attribu
     sampling();
 }
 # 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino"
-# 2 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino" 2
+
+# 3 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\sensors.ino" 2
 
 extern float val_s1;
 extern float val_s2;
@@ -121,12 +122,12 @@ extern float val_s2;
 inline bool is_s1_active(void)
 {
    // Serial.println(val_s1);
-    return val_s1 > 0.8;
+    return val_s1 > 0.6;
 }
 
 inline bool is_s2_active(void)
 {
-    return val_s2 > 0.8;
+    return val_s2 > 0.6;
 }
 
 inline bool is_s1_s2_active(void)
@@ -143,50 +144,40 @@ inline int get_dist_s2(void)
 {
     return digitalRead(A2 /* select the input pin for the potentiometer*/);
 }
-# 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\state_mach.ino"
+# 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\state_machine.ino"
 
 
 
 
 
 
-# 8 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\state_mach.ino" 2
 
-static bool car1_exiting = false;
+# 9 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\state_machine.ino" 2
+
+static bool car1_exit = false;
 static bool car1_car2_swap = false;
-static bool car2_entering = false;
+static bool car2_enter = false;
 static bool car2_pay = false;
 static bool idle = false;
 
 extern bool warning_flag;
 
-void state_machine(void)
+void state_machineine(void)
 {
 
-    static unsigned long start_car1_exiting = 0;
+    static unsigned long start_car1_exit = 0;
     static unsigned long start_car1_car2_swap = 0;
-    static unsigned long start_car2_entering = 0;
+    static unsigned long start_car2_enter = 0;
     static unsigned long start_car2_pay = 0;
     static unsigned long start_idle = 0;
 
-    volatile unsigned long time_car1_exiting = 0;
+    volatile unsigned long time_car1_exit = 0;
     volatile unsigned long time_car1_car2_swap = 0;
-    volatile unsigned long time_car2_entering = 0;
+    volatile unsigned long time_car2_enter = 0;
     volatile unsigned long time_car2_pay = 0;
     volatile unsigned long time_idle = 0;
 
-    // Bengin of states chaining
-    // Caso esteja vindo de idle, será feita a verificacao do
-    // tempo decorrido para avaliar se irá para o prox estado.
-    if (idle && is_car2_entering())
-    {
-        idle = false;
-        time_idle = (float)(millis() - start_idle) / 1000.000;
-        Serial.println(String((float)time_idle, 1));
-        if (time_idle <= 2)
-            goto car_swap;
-    }
-    if (!car1_exiting && is_car1_exiting())
+    if (!car1_exit && is_car1_exit())
     {
         // Reset the alarm if new car enter
         warning_flag = false;
@@ -194,8 +185,7 @@ void state_machine(void)
         {
             car2_pay = false;
             time_car2_pay = (float)(millis() - start_car2_pay) / 1000.000;
-            // Time between prev state in seconds
-            Serial.println(String((float)time_car2_pay, 1));
+            csv_print(String((float)time_car2_pay, 1));
             if (time_car2_pay <= 5)
             {
                 // Activates the indicator of invasor
@@ -203,75 +193,102 @@ void state_machine(void)
                 Serial.println("INVASOR");
             }
         }
-        rst_states(); // Reseting all flags
-        car1_exiting = true;
-        Serial.print("CAR_1_EXIT ");
-        start_car1_exiting = millis();
+        rst_states();
+        car1_exit = true;
+        csv_print(String("CAR_1_EXIT "));
+        start_car1_exit = millis();
     }
-    else if (!car1_car2_swap && car1_exiting && is_car1_car2_swap())
+    else if (!car1_car2_swap && car1_exit && is_car1_car2_swap())
     {
-        car1_exiting = false;
-        time_car1_exiting = (float)(millis() - start_car1_exiting) / 1000.000;
-        // Time between prev state in seconds
-        Serial.println(String((float)time_car1_exiting, 1));
-        if (time_car1_exiting <= 10)
+        car1_exit = false;
+        time_car1_exit = (float)(millis() - start_car1_exit) / 1000.000;
+        csv_print(String((float)time_car1_exit, 1));
+        if (time_car1_exit <= 3)
         {
             car1_car2_swap = true;
-            Serial.print("SWAP ");
+            csv_print(String("SWAP "));
             start_car1_car2_swap = millis();
         }
     }
-    else if (!car2_entering && car1_car2_swap && is_car2_entering())
+    else if (!car2_enter && (car1_car2_swap || idle) && is_car2_enter())
     {
-    car_swap:
-        car1_car2_swap = false;
-        time_car1_car2_swap = (float)(millis() - start_car1_car2_swap) / 1000.000;
-        // Time between prev state in second
-        Serial.println(String((float)time_car1_car2_swap, 1));
-        if (time_car1_car2_swap <= 10)
+        if (car1_car2_swap)
         {
-            car2_entering = true;
-            Serial.print("CAR_2_ENTER ");
-            start_car2_entering = millis();
+            car1_car2_swap = false;
+            time_car1_car2_swap = (float)(millis() - start_car1_car2_swap) / 1000.000;
+            csv_print(String((float)time_car1_car2_swap, 1));
+        }
+        else if (idle)
+        {
+            idle = false;
+            time_idle = (float)(millis() - start_idle) / 1000.000;
+            csv_print(String((float)time_idle, 1));
+        }
+
+        if (time_car1_car2_swap <= 3 || time_idle <= 2)
+        {
+            car2_enter = true;
+            csv_print(String("CAR_2_ENTER "));
+            start_car2_enter = millis();
         }
     }
-    else if (!car2_pay && car2_entering && is_car2_pay())
+    else if (!car2_pay && car2_enter && is_car2_pay())
     {
-        car2_entering = false;
-        time_car2_entering = (float)(millis() - start_car2_entering) / 1000.000;
-        // Time between prev state in seconds
-        Serial.println(String((float)time_car2_entering, 1));
-        if (time_car2_entering <= 10)
+        car2_enter = false;
+        time_car2_enter = (float)(millis() - start_car2_enter) / 1000.000;
+        csv_print(String((float)time_car2_enter, 1));
+        if (time_car2_enter <= 3)
         {
             car2_pay = true;
-            Serial.print("CAR_2_PAY ");
+            csv_print(String("CAR_2_PAY "));
             start_car2_pay = millis();
         }
     }
-    else if (is_idle())
+    else if (!idle && is_idle())
     {
+        rst_states();
         idle = true;
         // Restarta a contagem com o tempo de início relativo
         // a última ativação do estado car1_entering.
-        if (car1_exiting)
+        if (car1_exit)
         {
-            Serial.print("IDLE");
+            csv_print(String("IDLE "));
             start_idle = millis();
         }
-        rst_states();
+    }
+    // Bengin of states chaining
+    // Caso esteja vindo de idle, será feita a verificacao do
+    // tempo decorrido para avaliar se irá para o prox estado.
+
+    // else if (idle && is_car2_enter())
+    // {
+    //     idle = false;
+    //     time_idle = (float)(millis() - start_idle) / 1000.000;
+    //     csv_print(String((float)time_idle, 1));
+    //     if (time_idle <= TIME_COND_CAR_SWAP)
+    //         goto car2_enter;
+    // }
+    else
+    {
+        if (time_car1_car2_swap || time_car1_exit ||
+            time_car2_enter || time_car2_pay > 10)
+        {
+            Serial.println("TIMEOUT");
+            rst_states();
+        }
     }
 }
 
 void rst_states(void)
 {
-    car1_exiting = false;
+    car1_exit = false;
     car1_car2_swap = false;
-    car2_entering = false;
+    car2_enter = false;
     car2_pay = false;
-    // Serial.println("RESET");
+    idle = false;
 }
 
-inline bool is_car1_exiting(void)
+inline bool is_car1_exit(void)
 {
     return (!is_s1_active() && is_s2_active());
 }
@@ -279,7 +296,7 @@ inline bool is_car1_car2_swap(void)
 {
     return (is_s1_s2_active());
 }
-inline bool is_car2_entering(void)
+inline bool is_car2_enter(void)
 {
     return (is_s1_active() && !is_s2_active());
 }
@@ -291,9 +308,42 @@ inline bool is_idle(void)
 {
     return (!is_s1_active() && !is_s2_active());
 }
+
+inline bool word_verifier(String word)
+{
+    return word.equals("CAR_1_EXIT ") ||
+           word.equals("SWAP ") ||
+           word.equals("CAR_2_ENTER ") ||
+           word.equals("CAR_2_PAY ") ||
+           word.equals("IDLE ");
+}
+
+void csv_print(String string)
+{
+    static String last_string = String();
+
+    if (word_verifier(last_string))
+    {
+        if (word_verifier(string))
+        {
+            Serial.print('\n');
+            Serial.print(string);
+        }
+        else
+            Serial.println(string);
+    }
+    else
+    {
+        Serial.print(string);
+    }
+
+    last_string = string;
+}
 # 1 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
-# 2 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 2
-# 3 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 2
+
+
+# 4 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 2
+# 5 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 2
 
 unsigned long elapsedTime, previousTime;
 
@@ -305,131 +355,131 @@ float val_s2 = 0;
 /*Initializes the timer1 with a prescaler
 
  resulting an interruption each 1 second*/
-# 13 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 15 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
 void timer_initialize(void)
 {
     
-# 15 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 17 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 15 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 17 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
         ; // disable all interrupts
 
     
-# 17 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
-   (*(volatile uint8_t *)(0xB0)) 
-# 17 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
-          = 0;
-    
-# 18 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
-   (*(volatile uint8_t *)(0xB1)) 
-# 18 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
-          = 0;
-    
 # 19 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
-   (*(volatile uint8_t *)(0xB2)) 
+   (*(volatile uint8_t *)(0xB0)) 
 # 19 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+          = 0;
+    
+# 20 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+   (*(volatile uint8_t *)(0xB1)) 
+# 20 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+          = 0;
+    
+# 21 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+   (*(volatile uint8_t *)(0xB2)) 
+# 21 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
          = 0;
     // 90.3179190751445 Hz (16000000/((172+1)*1024))
     
-# 21 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 23 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    (*(volatile uint8_t *)(0xB3)) 
-# 21 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 23 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
          = 172;
     // CTC
     
-# 23 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    (*(volatile uint8_t *)(0xB0)) 
-# 23 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
           |= (1 << 
-# 23 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                    1
-# 23 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                         );
     // Prescaler 1024
     
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    (*(volatile uint8_t *)(0xB1)) 
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
           |= (1 << 
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                    2
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                        ) | (1 << 
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                                  1
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                                      ) | (1 << 
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                                                0
-# 25 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                                                    );
     // Output Compare Match A Interrupt Enable
     
-# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 29 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    (*(volatile uint8_t *)(0x70)) 
-# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 29 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
           |= (1 << 
-# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 29 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                    1
-# 27 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 29 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                          );
 
     
-# 29 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
-   (*(volatile uint8_t *)(0x80)) 
-# 29 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
-          = 0;
-    
-# 30 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
-   (*(volatile uint8_t *)(0x81)) 
-# 30 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
-          = 0;
-    
 # 31 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
-   (*(volatile uint16_t *)(0x84)) 
+   (*(volatile uint8_t *)(0x80)) 
 # 31 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
-         = 0;
+          = 0;
     
 # 32 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
-   (*(volatile uint16_t *)(0x88)) 
+   (*(volatile uint8_t *)(0x81)) 
 # 32 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+          = 0;
+    
+# 33 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+   (*(volatile uint16_t *)(0x84)) 
+# 33 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+         = 0;
+    
+# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+   (*(volatile uint16_t *)(0x88)) 
+# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
          = 31250; // compare match register 16MHz/256/2 = 31250
     
-# 33 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    (*(volatile uint8_t *)(0x81)) 
-# 33 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
           = (1 << 
-# 33 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                   3
-# 33 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                        ); // CTC mode
     
-# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 36 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    (*(volatile uint8_t *)(0x81)) 
-# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 36 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
           |= (1 << 
-# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 36 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                    1
-# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 36 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                        ) | (1 << 
-# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 36 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                                  0
-# 34 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 36 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                                      ); // Frequency 16Mhz/64 = 250 kHz
     
-# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 37 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    (*(volatile uint8_t *)(0x6F)) 
-# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 37 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
           = (1 << 
-# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 37 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
                   1
-# 35 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 37 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
                         ); // Local interruption OCIE1A
 
     
-# 37 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
+# 39 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 37 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
+# 39 "C:\\Users\\Hardware 1\\Desktop\\Detector-de-Carro\\main_v2.0.0\\timer.ino"
         ; // enable all interrupts
 }
 
@@ -466,23 +516,23 @@ void onTimer(void)
 void sampling(void)
 {
     static int counter = 0;
-    static float dist_t1_buff[50] = {0};
-    static float dist_t2_buff[50] = {0};
+    static float dist_t1_buff[200] = {0};
+    static float dist_t2_buff[200] = {0};
     float sample = 0;
 
-    sample = (float)get_dist_s1() / 50;
+    sample = (float)get_dist_s1() / 200;
     val_s1 = val_s1 + sample - dist_t1_buff[counter];
     // Serial.print(String(val_s1));
     // Serial.print(" ");
     dist_t1_buff[counter] = sample;
 
-    sample = (float)get_dist_s2() / 50;
+    sample = (float)get_dist_s2() / 200;
     val_s2 = val_s2 + sample - dist_t2_buff[counter];
     // Serial.print(String(val_s2));
     // Serial.print("\n");
 
     dist_t2_buff[counter] = sample;
     counter++;
-    if (counter == 50)
+    if (counter == 200)
         counter = 0;
 }

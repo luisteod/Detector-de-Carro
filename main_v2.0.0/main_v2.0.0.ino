@@ -5,7 +5,7 @@
 #include "sensors.h"
 #include "interrupt.h"
 #include "timer.h"
-#include "state_mach.h"
+#include "state_machine.h"
 
 #define TIME_MAX 0.01 // Tempo máximo de espera do carro na cancela
 #define STOP_LED 13
@@ -88,6 +88,6 @@ void loop()
 
   free_verify();
   CarStopAlarm();
-  state_machine();
+  state_machineine();
 
 }

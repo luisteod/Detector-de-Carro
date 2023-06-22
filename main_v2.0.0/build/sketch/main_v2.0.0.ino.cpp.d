@@ -19,4 +19,4 @@ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\main_v2.
  C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\sensors.h \
  C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\interrupt.h \
  C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\timer.h \
- C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\state_mach.h
+ C:\Users\Hardware\ 1\Desktop\Detector-de-Carro\main_v2.0.0\build\sketch\state_machine.h

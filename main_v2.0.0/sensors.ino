@@ -1,3 +1,4 @@
+#define MIN_VAL_ACTIVE 0.6
 #include "sensors.h"
 
 extern float val_s1;
@@ -6,12 +7,12 @@ extern float val_s2;
 inline bool is_s1_active(void)
 {
    // Serial.println(val_s1);
-    return val_s1 > 0.8;
+    return val_s1 > MIN_VAL_ACTIVE;
 }
 
 inline bool is_s2_active(void)
 {
-    return val_s2 > 0.8;
+    return val_s2 > MIN_VAL_ACTIVE;
 }
 
 inline bool is_s1_s2_active(void)

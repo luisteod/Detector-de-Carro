@@ -1,3 +1,11 @@
-# Specify filepatterns you want git to ignore.
+#For car firmware
+main_v2.0.0/build
+!main_v2.0.0/build/main_v2.0.0.ino.with_bootloader.hex
+main_v2.0.0/.vscode
+
 main/build/*
 !main/build/main.ino.with_bootloader.hex
+
+
+#For car analytics
+CarDetectorAnalytics/.vs

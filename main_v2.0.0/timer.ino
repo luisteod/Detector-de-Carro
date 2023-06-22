@@ -1,3 +1,5 @@
+#define BUFFER_SIZE 50
+
 #include "timer.h"
 #include "sensors.h"
 
