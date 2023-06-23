@@ -72,20 +72,9 @@ void free_verify(void)
     digitalWrite(FREE_LED, LOW);
   }
 }
-long print_time = millis();
 
 void loop()
 {
-  if (millis() - print_time > 100)
-  {
-    // Serial.print("S1: ");
-    // Serial.println(val_s1);
-    // Serial.print("S2: ");
-    // Serial.println(val_s2);
-
-    // print_time = millis();
-  }
-
   free_verify();
   CarStopAlarm();
   state_machineine();
