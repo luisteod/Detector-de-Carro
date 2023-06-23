@@ -9,5 +9,7 @@ main/build/*
 
 #For car analytics
 CarDetectorAnalytics/.vs
-CarDetectorAnalytics/obj/Debug/*
-!CarDetectorAnalytics/obj/Debug/CarDetectorAnalytics.exe
+CarDetectorAnalytics/obj
+CarDetectorAnalytics/bin/Debug/*
+!CarDetectorAnalytics/bin/Debug/CarDetectorAnalytics.exe
+

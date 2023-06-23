@@ -3,8 +3,7 @@
 #define TEMPO_MAX_car2_enter 3
 #define TEMPO_MAX_CAR2_PAY 5
 #define TIME_COND_CAR_SWAP 2
-#define START_IDLE_TIME 10
-#define TIMEOUT 10
+#define TIMEOUT 6
 #include "state_machine.h"
 
 static bool car1_exit = false;
@@ -39,7 +38,7 @@ void state_machineine(void)
         if (car2_pay)
         {
             car2_pay = false;
-            Serial.print(" time_car2_pay: ");
+            //Serial.print("time_car2_pay ");
             time_car2_pay = (float)(millis() - start_car2_pay) / 1000.000;
             csv_print(String((float)time_car2_pay, 1));
             if (time_car2_pay <= TEMPO_MAX_CAR2_PAY)
@@ -57,7 +56,7 @@ void state_machineine(void)
     else if ((!car1_car2_swap && car1_exit && is_car1_car2_swap()))
     {
         car1_exit = false;
-        Serial.print(" time_car1_exit: ");
+        //Serial.print("time_car1_exit ");
         time_car1_exit = (float)(millis() - start_car1_exit) / 1000.000;
         csv_print(String((float)time_car1_exit, 1));
         if (time_car1_exit <= TEMPO_MAX_car1_exit)
@@ -67,12 +66,12 @@ void state_machineine(void)
             start_car1_car2_swap = millis();
         }
     }
-    else if (car1_exit && is_idle())
+    else if (!idle && car1_exit && is_idle())
     {
         car1_exit = false;
         // Restarta a contagem com o tempo de início relativo
         // a última ativação do estado car1_entering.
-        Serial.print(" time_car1_exit: ");
+        //Serial.print("time_car1_exit ");
         time_car1_exit = (float)(millis() - start_car1_exit) / 1000.000;
         csv_print(String((float)time_car1_exit, 1));
 
@@ -85,14 +84,14 @@ void state_machineine(void)
         if (car1_car2_swap)
         {
             car1_car2_swap = false;
-            Serial.print(" time_swap: ");
+            //Serial.print("time_swap ");
             time_car1_car2_swap = (float)(millis() - start_car1_car2_swap) / 1000.000;
             csv_print(String((float)time_car1_car2_swap, 1));
         }
         else if (idle)
         {
             idle = false;
-            Serial.print(" time_idle: ");
+            //Serial.print("time_idle ");
             time_idle = (float)(millis() - start_idle) / 1000.000;
             csv_print(String((float)time_idle, 1));
         }
@@ -107,7 +106,7 @@ void state_machineine(void)
     else if (!car2_pay && car2_enter && is_car2_pay())
     {
         car2_enter = false;
-        Serial.print(" time_car2_enter: ");
+        //Serial.print("time_car2_enter ");
         time_car2_enter = (float)(millis() - start_car2_enter) / 1000.000;
         csv_print(String((float)time_car2_enter, 1));
         if (time_car2_enter <= TEMPO_MAX_car2_enter)
@@ -117,17 +116,18 @@ void state_machineine(void)
             start_car2_pay = millis();
         }
     }
-    else if (!idle && is_idle())
-    {
-        idle = true;
-        // Restarta a contagem com o tempo de início relativo
-        // a última ativação do estado car1_entering.
-        if (car1_exit)
-        {
-            csv_print(String("IDLE "));
-            start_idle = millis();
-        }
-    }
+
+    // else if (!idle && is_idle())
+    // {
+    //     idle = true;
+    //     // Restarta a contagem com o tempo de início relativo
+    //     // a última ativação do estado car1_entering.
+    //     if (car1_exit)
+    //     {
+    //         csv_print(String("IDLE "));
+    //         start_idle = millis();
+    //     }
+    // }
     // Bengin of states chaining
     // Caso esteja vindo de idle, será feita a verificacao do
     // tempo decorrido para avaliar se irá para o prox estado.
@@ -142,7 +142,6 @@ void state_machineine(void)
     // }
 
     time_out_verifier();
-    debug(debug_word);
 }
 
 void debug(char *word)
